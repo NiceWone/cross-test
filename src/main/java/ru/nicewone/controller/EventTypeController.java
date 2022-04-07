@@ -1,6 +1,7 @@
 package ru.nicewone.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import java.io.IOException;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +22,7 @@ public class EventTypeController {
 
     @GetMapping("/run")
     @Operation(summary = "run")
-    public Void run() {
+    public Void run() throws IOException {
         return eventTypeService.run();
     }
 

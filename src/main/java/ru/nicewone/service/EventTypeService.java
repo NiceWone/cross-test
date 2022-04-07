@@ -1,5 +1,6 @@
 package ru.nicewone.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -15,6 +16,7 @@ import ru.nicewone.repository.DataTypeRepository;
 public class EventTypeService {
 
     private final DataTypeRepository dataTypeRepository;
+    private final FileService fileService;
 
     @Transactional(readOnly = true)
     public List<DataType> receiveAllEventType() {
@@ -41,7 +43,7 @@ public class EventTypeService {
         return dataTypeRepository.save(eventTypeEntity);
     }
 
-    public Void run() {
-        return null;
+    public Void run() throws IOException {
+        return fileService.doTheJob(receiveAllEventType());
     }
 }
