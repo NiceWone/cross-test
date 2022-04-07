@@ -7,6 +7,8 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
@@ -39,11 +41,14 @@ public class FileService {
 
     private void doParse(String line, Path outPath, List<DataType> dataTypes) throws IOException {
         for (DataType dataType : dataTypes) {
-            if (line.matches(dataType.eventRegExp())) {
+            Pattern pattern = Pattern.compile(dataType.eventRegExp());
+            Matcher matcher = pattern.matcher(line);
+
+            if (matcher.find()) {
                 LocalDateTime now = LocalDateTime.now();
                 Map<String, String> data = dataType.data();
 
-                Files.writeString(outPath, "My string to save");
+                Files.writeString(outPath, "My string to save"); // TODO: 07.04.2022 build gson
                 System.out.println(line);
             }
         }

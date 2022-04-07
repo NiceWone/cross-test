@@ -43,6 +43,7 @@ public class EventTypeService {
         return dataTypeRepository.save(eventTypeEntity);
     }
 
+    @Transactional(readOnly = true)
     public Void run() throws IOException {
         return fileService.doTheJob(receiveAllEventType());
     }
