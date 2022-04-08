@@ -1,22 +1,29 @@
 package ru.nicewone.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import ru.nicewone.model.DataType;
+import ru.nicewone.model.DataTypeOut;
 
 @Service
 @Log4j2
+@AllArgsConstructor
 public class FileService {
+
+    private final ObjectMapper objectMapper;
 
     public Void doTheJob(List<DataType> dataTypes) throws IOException {
         Path inPath = Paths.get(new ClassPathResource("files-in").getFile().getAbsolutePath());
@@ -41,15 +48,22 @@ public class FileService {
 
     private void doParse(String line, Path outPath, List<DataType> dataTypes) throws IOException {
         for (DataType dataType : dataTypes) {
-            Pattern pattern = Pattern.compile(dataType.eventRegExp());
-            Matcher matcher = pattern.matcher(line);
+            Pattern patternLine = Pattern.compile(dataType.eventRegExp());
+            Matcher matcherLine = patternLine.matcher(line);
 
-            if (matcher.find()) {
-                LocalDateTime now = LocalDateTime.now();
-                Map<String, String> data = dataType.data();
+            if (matcherLine.find()) {
+                String substring = line.substring(matcherLine.start(), matcherLine.end());
+                DataTypeOut dataTypeOut = new DataTypeOut(dataType.type(), LocalDateTime.now(), new HashMap<>());
 
-                Files.writeString(outPath, "My string to save"); // TODO: 07.04.2022 build gson
-                System.out.println(line);
+                for (Entry<String, String> entry : dataType.data().entrySet()) {
+                    Pattern patternSubString = Pattern.compile(entry.getValue());
+                    Matcher matcherSubString = patternSubString.matcher(substring);
+                    if (matcherSubString.find()) {
+                        dataTypeOut.data().put(entry.getKey(), line.substring(matcherLine.start(), matcherLine.end()));
+                        Files.writeString(outPath, objectMapper.writeValueAsString(dataTypeOut));
+                        System.out.println(line);
+                    }
+                }
             }
         }
     }
