@@ -1,6 +1,13 @@
 package ru.nicewone.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.stereotype.Service;
+import ru.nicewone.model.DataType;
+import ru.nicewone.model.DataTypeOut;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,12 +18,6 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.stereotype.Service;
-import ru.nicewone.model.DataType;
-import ru.nicewone.model.DataTypeOut;
 
 @Service
 @Log4j2
@@ -33,7 +34,12 @@ public class FileService {
             String fileName = pathToFile.getFileName().toString();
             log.info("Current File is : " + fileName);
 
-            Path outPath = Paths.get(new ClassPathResource("files-out").getFile().getAbsolutePath() + "/" + fileName);
+            Path directoryOutName = Paths.get(new ClassPathResource("files-in").getFile()
+                    .getParentFile().getAbsolutePath() + "/files-out");
+            if (!Files.exists(directoryOutName)) {
+                Files.createDirectory(directoryOutName);
+            }
+            Path outPath = Paths.get(directoryOutName + "/" + fileName);
             if (!Files.exists(outPath)) {
                 Files.createFile(outPath);
             }
