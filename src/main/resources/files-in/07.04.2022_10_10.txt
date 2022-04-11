@@ -1,7 +1,19 @@
 Егор Алла Александр
-1111123111111
-222123
-1233333333
-44444444
-555555555
-66666
+Егор Алла АлександрЕгор Алла Александр
+Егор Алла Александр Егор Алла Александр
+Егор Алла Александр Егор Алла Александр Егор Алла Александр Егор Алла АлександрЕгор Алла Александр
+Е фывфыв фываьывдлжаьдж фбывждэфбыждв йц уэжбйцэжу
+
+2022-04-11 12:53:46.484  INFO 6624 --- [nio-8080-exec-1] o.s.web.servlet.DispatcherServlet        : Completed initialization in 2 ms
+2022-04-11 12:54:05.132  INFO 6624 --- [nio-8080-exec-2] ru.nicewone.service.FileService          : Current File is : 08.04.2022_10_10.txt
+
+2022-04-11 13:10:39.283 ERROR 13344 --- [nio-8080-exec-1] ru.nicewone.service.FileService          : test eeroor lelvel
+2022-04-11 13:10:39.283 ERROR 13344 --- [nio-8080-exec-1] ru.nicewone.service.FileService          : java.lang.RuntimeException: runtime exception fatal
+
+2022-04-11 13:08:32.030 ERROR 18696 --- [nio-8080-exec-2] ru.nicewone.service.FileService          : test
+
+java.lang.RuntimeException: runtime exception error
+
+2022-04-11 13:08:32.031 ERROR 18696 --- [nio-8080-exec-2] ru.nicewone.service.FileService          : fatal
+
+java.lang.RuntimeException: runtime exception fatal
