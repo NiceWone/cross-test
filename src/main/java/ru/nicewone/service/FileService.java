@@ -29,21 +29,22 @@ public class FileService {
     private final ObjectMapper objectMapper;
 
     public Void doTheJob(List<DataType> dataTypes) throws IOException {
-        Path inPath = Paths.get(new ClassPathResource("files-in").getFile().getAbsolutePath());
-        List<Path> pathToFileList = Files.walk(inPath).filter(Files::isRegularFile).toList();
+        Path inputDirectoryPath = Paths.get(new ClassPathResource("files-in").getFile().getAbsolutePath());
+        List<Path> pathToInputFileList = Files.walk(inputDirectoryPath).filter(Files::isRegularFile).toList();
 
-        for (Path pathToFile : pathToFileList) {
-            String fileName = pathToFile.getFileName().toString();
-            log.info("Current File is : " + fileName);
+        for (Path pathToFile : pathToInputFileList) {
+            String inputFileName = pathToFile.getFileName().toString();
+            log.info("Current File is : " + inputFileName);
 
-            Path directoryOutName = Paths.get(new ClassPathResource("files-in").getFile()
+            Path outDirectoryName = Paths.get(new ClassPathResource("files-in").getFile()
                     .getParentFile().getAbsolutePath() + "/files-out");
-            if (!Files.exists(directoryOutName)) {
-                Files.createDirectory(directoryOutName);
+            Path outFileName = Paths.get(outDirectoryName + "/" + inputFileName);
+            if (!Files.exists(outDirectoryName)) {
+                Files.createDirectory(outDirectoryName);
             }
 
             for (String line : Files.lines(pathToFile).toList()) {
-                doParse(line, Paths.get(directoryOutName + "/" + fileName), dataTypes);
+                doParse(line, outFileName, dataTypes);
             }
         }
 
