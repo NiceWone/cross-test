@@ -32,7 +32,10 @@ public class FileService {
         long start = System.nanoTime();
         Path inputDirectoryPath = Paths.get(new ClassPathResource("files-in").getFile().getAbsolutePath());
 
-        Files.walk(inputDirectoryPath).forEach(path -> fileMethod(path, dataTypes));
+        Files.walk(inputDirectoryPath)
+                .parallel()
+                .filter(Files::isRegularFile)
+                .forEach(path -> fileMethod(path, dataTypes));
 
         log.info("All time is " + (System.nanoTime() - start));
         log.info("All time is " + Duration.ofNanos(System.nanoTime() - start));
