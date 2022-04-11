@@ -1,6 +1,5 @@
 package ru.nicewone.service;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
@@ -44,7 +43,7 @@ public class EventTypeService {
     }
 
     @Transactional(readOnly = true)
-    public Void run() throws IOException {
+    public List<Boolean> run() {
         return fileService.doTheJob(receiveAllEventType());
     }
 }
