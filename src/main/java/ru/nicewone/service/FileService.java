@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -27,17 +28,18 @@ public class FileService {
     private final ObjectMapper objectMapper;
 
     @SneakyThrows
-    public List<Boolean> doTheJob(List<DataType> dataTypes) {
+    public void doTheJob(List<DataType> dataTypes) {
+        long start = System.nanoTime();
         Path inputDirectoryPath = Paths.get(new ClassPathResource("files-in").getFile().getAbsolutePath());
 
-        return Files.walk(inputDirectoryPath)
-                .filter(Files::isRegularFile)
-                .map(path -> fileMethod(path, dataTypes))
-                .toList();
+        Files.walk(inputDirectoryPath).forEach(path -> fileMethod(path, dataTypes));
+
+        log.info("All time is " + (System.nanoTime() - start));
+        log.info("All time is " + Duration.ofNanos(System.nanoTime() - start));
     }
 
     @SneakyThrows
-    private Boolean fileMethod(Path pathToFile, List<DataType> dataTypes) {
+    private void fileMethod(Path pathToFile, List<DataType> dataTypes) {
         String inputFileName = pathToFile.getFileName().toString();
         log.info("Current File is : " + inputFileName);
 
@@ -52,40 +54,31 @@ public class FileService {
             log.info("Erase all data in file :" + outFileName);
             FileChannel.open(outFileName, StandardOpenOption.WRITE).truncate(0).close();
         }
-        Files.lines(pathToFile).forEach(line -> lineMethod(line, outFileName, dataTypes));
-        return true;
+        Files.lines(pathToFile).forEach(line -> parseLineAndWrite(line, outFileName, dataTypes));
     }
 
     @SneakyThrows
-    private void lineMethod(String line, Path outPath, List<DataType> dataTypes) {
+    private void parseLineAndWrite(String line, Path outPath, List<DataType> dataTypes) {
         for (DataType dataType : dataTypes) {
-            Pattern patternLine = Pattern.compile(dataType.eventRegExp());
-            Matcher matcherLine = patternLine.matcher(line);
+            Matcher mainMatcher = Pattern.compile(dataType.eventRegExp()).matcher(line);
 
-            if (matcherLine.find()) {
+            if (mainMatcher.find()) {
+                String subLine = line.substring(mainMatcher.start(), mainMatcher.end());
                 DataTypeOut dataTypeOut = new DataTypeOut(dataType.type(), LocalDateTime.now(), new HashMap<>());
 
                 dataType.data().forEach((key, value) -> {
-                    Pattern patternSubString = Pattern.compile(value);
-                    Matcher matcherSubString = patternSubString.matcher(line);
-                    if (matcherSubString.find()) {
-                        String substring = line.substring(matcherSubString.start(), matcherSubString.end());
+                    Matcher subMatcher = Pattern.compile(value).matcher(subLine);
+                    if (subMatcher.find()) {
+                        String substring = subLine.substring(subMatcher.start(), subMatcher.end());
                         dataTypeOut.data().put(key, substring);
                     }
                 });
                 String resultLine = objectMapper.writeValueAsString(dataTypeOut);
-                log.info("Line : " + line);
-                log.info("Json: " + resultLine);
-                writeToFile(resultLine, outPath);
+                if (!resultLine.isEmpty()) {
+                    Files.writeString(outPath, resultLine + System.lineSeparator(),
+                            StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                }
             }
-        }
-    }
-
-    @SneakyThrows
-    private void writeToFile(String lineToWrite, Path outPath) {
-        if (!lineToWrite.isEmpty()) {
-            Files.writeString(outPath,
-                    lineToWrite + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         }
     }
 }

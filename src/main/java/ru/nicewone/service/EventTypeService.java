@@ -43,7 +43,7 @@ public class EventTypeService {
     }
 
     @Transactional(readOnly = true)
-    public List<Boolean> run() {
-        return fileService.doTheJob(receiveAllEventType());
+    public void run() {
+        fileService.doTheJob(receiveAllEventType());
     }
 }

@@ -21,8 +21,8 @@ public class EventTypeController {
 
     @GetMapping("/run")
     @Operation(summary = "run")
-    public List<Boolean> run() {
-        return eventTypeService.run();
+    public void run() {
+        eventTypeService.run();
     }
 
     @PostMapping("/add")
