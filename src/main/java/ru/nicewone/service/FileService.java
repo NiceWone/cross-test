@@ -41,13 +41,9 @@ public class FileService {
             if (!Files.exists(directoryOutName)) {
                 Files.createDirectory(directoryOutName);
             }
-            Path outPath = Paths.get(directoryOutName + "/" + fileName);
-            if (!Files.exists(outPath)) {
-                Files.createFile(outPath);
-            }
 
             for (String line : Files.lines(pathToFile).toList()) {
-                doParse(line, outPath, dataTypes);
+                doParse(line, Paths.get(directoryOutName + "/" + fileName), dataTypes);
             }
         }
 
@@ -55,7 +51,7 @@ public class FileService {
     }
 
     private void doParse(String line, Path outPath, List<DataType> dataTypes) throws IOException {
-        List<String> toWriteList = new ArrayList<>(100);
+        List<String> toWriteList = new ArrayList<>();
         for (DataType dataType : dataTypes) {
             Pattern patternLine = Pattern.compile(dataType.eventRegExp());
             Matcher matcherLine = patternLine.matcher(line);
@@ -67,20 +63,28 @@ public class FileService {
                     Pattern patternSubString = Pattern.compile(entry.getValue());
                     Matcher matcherSubString = patternSubString.matcher(line);
                     if (matcherSubString.find()) {
-                        dataTypeOut.data().put(entry.getKey(), line.substring(matcherLine.start(), matcherLine.end()));
+                        String substring = line.substring(matcherSubString.start(), matcherSubString.end());
+                        dataTypeOut.data().put(entry.getKey(), substring);
                         String resultLine = objectMapper.writeValueAsString(dataTypeOut);
                         log.info("Строка : " + line);
                         log.info("Результат: " + resultLine);
                         toWriteList.add(resultLine);
                     }
+                    if (toWriteList.size() > 1) {
+                        writeToFile(toWriteList, outPath);
+                        toWriteList.clear();
+                    }
                 }
             }
         }
+        writeToFile(toWriteList, outPath);
+    }
 
+    private void writeToFile(List<String> toWriteList, Path outPath) throws IOException {
         if (!toWriteList.isEmpty()) {
-            String stingToWrite =
-                    toWriteList.stream().collect(Collectors.joining(System.lineSeparator())) + System.lineSeparator();
-            Files.writeString(outPath, stingToWrite, StandardOpenOption.APPEND);
+            Files.writeString(outPath,
+                    toWriteList.stream().collect(Collectors.joining(System.lineSeparator()))
+                            + System.lineSeparator(), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         }
     }
 }
