@@ -65,16 +65,12 @@ public class FileService {
                     if (matcherSubString.find()) {
                         String substring = line.substring(matcherSubString.start(), matcherSubString.end());
                         dataTypeOut.data().put(entry.getKey(), substring);
-                        String resultLine = objectMapper.writeValueAsString(dataTypeOut);
-                        log.info("Строка : " + line);
-                        log.info("Результат: " + resultLine);
-                        toWriteList.add(resultLine);
-                    }
-                    if (toWriteList.size() > 1) {
-                        writeToFile(toWriteList, outPath);
-                        toWriteList.clear();
                     }
                 }
+                String resultLine = objectMapper.writeValueAsString(dataTypeOut);
+                log.info("Строка : " + line);
+                log.info("Результат: " + resultLine);
+                toWriteList.add(resultLine);
             }
         }
         writeToFile(toWriteList, outPath);
