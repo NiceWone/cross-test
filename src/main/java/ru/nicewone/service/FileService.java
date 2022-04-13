@@ -77,6 +77,7 @@ public class FileService {
                 });
                 String resultLine = objectMapper.writeValueAsString(dataTypeOut);
                 if (!resultLine.isEmpty()) {
+                    // TODO: 11.04.2022  запись стоит сделать через буфер и написать тесты
                     Files.writeString(outPath, resultLine + System.lineSeparator(),
                             StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 }
