@@ -108,4 +108,4 @@ POST /api/add
 ---
 ```
 
-![alt text for screen readers](src\main\resources\image_2022-04-18_19-52-18.png "Text to show on mouseover")
+![alt text for screen readers](https://raw.githubusercontent.com/NiceWone/cross-test/master/src/main/resources/image_2022-04-18_19-52-18.png "Text to show on mouseover")
