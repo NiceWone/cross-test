@@ -20,19 +20,19 @@ public class EventTypeController {
     private final EventTypeService eventTypeService;
 
     @GetMapping("/run")
-    @Operation(summary = "run")
+    @Operation(summary = "Запустить")
     public void run() {
         eventTypeService.run();
     }
 
     @PostMapping("/add")
-    @Operation(summary = "add")
+    @Operation(summary = "Добавить")
     public EventTypeEntity addNewEventType(@RequestBody DataType dataType) {
         return eventTypeService.save(dataType);
     }
 
     @GetMapping("/receive")
-    @Operation(summary = "receive")
+    @Operation(summary = "Посмотреть")
     public List<DataType> receiveAllEventType() {
         return eventTypeService.receiveAllEventType();
     }
