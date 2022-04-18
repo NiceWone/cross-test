@@ -61,6 +61,8 @@ POST /api/add
 {"type":2,"dateTime":"2022-04-11T20:05:56.1007541","data":{"date":"2022-04-11","level":"ERROR","thread":"[nio-8080-exec-2]","message":" : test","class":"] ru.nicewone.service.FileService          :","timestamp":"13:08:32.030"}}
 ```
 
+Результаты:
+
 ```txt
 Файл 1 - 39098 строк
 Файл 2 - 10860 строк
